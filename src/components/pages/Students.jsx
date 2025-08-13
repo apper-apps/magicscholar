@@ -25,16 +25,15 @@ const Students = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [gradeFilter, setGradeFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newStudent, setNewStudent] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    gradeLevel: 9,
-    dateOfBirth: ""
+const [newStudent, setNewStudent] = useState({
+    first_name_c: "",
+    last_name_c: "",
+    email_c: "",
+    phone_c: "",
+    grade_level_c: 9,
+    date_of_birth_c: ""
   });
   const [studentGrades, setStudentGrades] = useState({});
-
   const loadStudents = async () => {
     try {
       setLoading(true);
@@ -74,40 +73,49 @@ const Students = () => {
     let filtered = [...students];
 
     // Search filter
-    if (searchQuery) {
+if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(student =>
-        student.firstName.toLowerCase().includes(query) ||
-        student.lastName.toLowerCase().includes(query) ||
-        student.email.toLowerCase().includes(query)
+        student.first_name_c?.toLowerCase().includes(query) ||
+        student.last_name_c?.toLowerCase().includes(query) ||
+        student.email_c?.toLowerCase().includes(query)
       );
     }
 
     // Status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter(student => student.status === statusFilter);
+      filtered = filtered.filter(student => student.status_c === statusFilter);
     }
 
     // Grade level filter
     if (gradeFilter !== "all") {
-      filtered = filtered.filter(student => student.gradeLevel === parseInt(gradeFilter));
+      filtered = filtered.filter(student => student.grade_level_c === parseInt(gradeFilter));
     }
 
     setFilteredStudents(filtered);
   };
 
-  const handleAddStudent = async (e) => {
+const handleAddStudent = async (e) => {
     e.preventDefault();
     try {
-      const createdStudent = await studentService.create(newStudent);
+      const studentData = {
+        first_name_c: newStudent.first_name_c,
+        last_name_c: newStudent.last_name_c,
+        email_c: newStudent.email_c,
+        phone_c: newStudent.phone_c,
+        grade_level_c: parseInt(newStudent.grade_level_c),
+        date_of_birth_c: newStudent.date_of_birth_c,
+        status_c: "active"
+      };
+      const createdStudent = await studentService.create(studentData);
       setStudents(prev => [...prev, createdStudent]);
       setNewStudent({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        gradeLevel: 9,
-        dateOfBirth: ""
+        first_name_c: "",
+        last_name_c: "",
+        email_c: "",
+        phone_c: "",
+        grade_level_c: 9,
+        date_of_birth_c: ""
       });
       setShowAddModal(false);
       toast.success("Student added successfully!");
@@ -222,18 +230,18 @@ const Students = () => {
                   onClick={() => navigate(`/students/${student.Id}`)}
                 >
                   <div className="flex items-center space-x-4">
-                    <Avatar
-                      initials={`${student.firstName[0]}${student.lastName[0]}`}
+<Avatar
+                      initials={`${student.first_name_c?.[0] || '?'}${student.last_name_c?.[0] || '?'}`}
                       size="default"
                     />
                     <div>
                       <h3 className="font-semibold text-gray-900">
-                        {student.firstName} {student.lastName}
+                        {student.first_name_c || ''} {student.last_name_c || ''}
                       </h3>
                       <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <span>{student.email}</span>
+                        <span>{student.email_c || ''}</span>
                         <span>•</span>
-                        <span>Grade {student.gradeLevel}</span>
+                        <span>Grade {student.grade_level_c || ''}</span>
                       </div>
                     </div>
                   </div>
@@ -248,7 +256,7 @@ const Students = () => {
                         }
                       </div>
                     </div>
-                    <StatusPill status={student.status} />
+                    <StatusPill status={student.status_c || 'active'} />
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -283,17 +291,17 @@ const Students = () => {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleAddStudent} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-2 gap-4">
                   <Input
                     label="First Name"
-                    value={newStudent.firstName}
-                    onChange={(e) => setNewStudent(prev => ({ ...prev, firstName: e.target.value }))}
+                    value={newStudent.first_name_c}
+                    onChange={(e) => setNewStudent(prev => ({ ...prev, first_name_c: e.target.value }))}
                     required
                   />
                   <Input
                     label="Last Name"
-                    value={newStudent.lastName}
-                    onChange={(e) => setNewStudent(prev => ({ ...prev, lastName: e.target.value }))}
+                    value={newStudent.last_name_c}
+                    onChange={(e) => setNewStudent(prev => ({ ...prev, last_name_c: e.target.value }))}
                     required
                   />
                 </div>
@@ -301,23 +309,23 @@ const Students = () => {
                 <Input
                   label="Email"
                   type="email"
-                  value={newStudent.email}
-                  onChange={(e) => setNewStudent(prev => ({ ...prev, email: e.target.value }))}
+                  value={newStudent.email_c}
+                  onChange={(e) => setNewStudent(prev => ({ ...prev, email_c: e.target.value }))}
                   required
                 />
                 
                 <Input
                   label="Phone"
                   type="tel"
-                  value={newStudent.phone}
-                  onChange={(e) => setNewStudent(prev => ({ ...prev, phone: e.target.value }))}
+                  value={newStudent.phone_c}
+                  onChange={(e) => setNewStudent(prev => ({ ...prev, phone_c: e.target.value }))}
                 />
                 
                 <div className="grid grid-cols-2 gap-4">
                   <Select
                     label="Grade Level"
-                    value={newStudent.gradeLevel}
-                    onChange={(e) => setNewStudent(prev => ({ ...prev, gradeLevel: parseInt(e.target.value) }))}
+                    value={newStudent.grade_level_c}
+                    onChange={(e) => setNewStudent(prev => ({ ...prev, grade_level_c: parseInt(e.target.value) }))}
                     required
                   >
                     <option value={9}>Grade 9</option>
@@ -329,8 +337,8 @@ const Students = () => {
                   <Input
                     label="Date of Birth"
                     type="date"
-                    value={newStudent.dateOfBirth}
-                    onChange={(e) => setNewStudent(prev => ({ ...prev, dateOfBirth: e.target.value }))}
+                    value={newStudent.date_of_birth_c}
+                    onChange={(e) => setNewStudent(prev => ({ ...prev, date_of_birth_c: e.target.value }))}
                     required
                   />
                 </div>

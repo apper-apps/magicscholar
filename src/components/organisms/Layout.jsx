@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import Header from "@/components/organisms/Header";
-import Sidebar from "@/components/organisms/Sidebar";
-import MobileSidebar from "@/components/organisms/MobileSidebar";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../../App";
 import ApperIcon from "@/components/ApperIcon";
-
+import Header from "@/components/organisms/Header";
+import MobileSidebar from "@/components/organisms/MobileSidebar";
+import Sidebar from "@/components/organisms/Sidebar";
+import Button from "@/components/atoms/Button";
 const Layout = ({ children }) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
+  const { logout } = useContext(AuthContext);
   return (
     <div className="min-h-screen bg-background-50 flex">
       {/* Desktop Sidebar */}
@@ -50,5 +51,4 @@ const Layout = ({ children }) => {
     </div>
   );
 };
-
 export default Layout;
