@@ -42,10 +42,10 @@ const Classes = () => {
       ]);
       
       for (const classItem of data) {
-        const classGrades = allGrades.filter(g => g.classId === classItem.Id.toString());
-        const uniqueStudentIds = [...new Set(classGrades.map(g => g.studentId))];
+const classGrades = allGrades.filter(g => (g.class_id_c?.Id || g.class_id_c).toString() === classItem.Id.toString());
+        const uniqueStudentIds = [...new Set(classGrades.map(g => g.student_id_c?.Id || g.student_id_c))];
         const average = classGrades.length > 0
-          ? Math.round(classGrades.reduce((sum, grade) => sum + grade.percentage, 0) / classGrades.length)
+          ? Math.round(classGrades.reduce((sum, grade) => sum + grade.percentage_c, 0) / classGrades.length)
           : 0;
           
         stats[classItem.Id] = {
@@ -71,14 +71,14 @@ const Classes = () => {
     e.preventDefault();
     try {
       const createdClass = await classService.create(newClass);
-      setClasses(prev => [...prev, createdClass]);
+setClasses(prev => [...prev, createdClass]);
       setNewClass({
-        name: "",
-        subject: "",
-        period: "",
-        room: "",
-        year: "2024",
-        semester: "Fall"
+        Name: "",
+        subject_c: "",
+        period_c: "",
+        room_c: "",
+        year_c: "2024",
+        semester_c: "Fall"
       });
       setShowAddModal(false);
       toast.success("Class added successfully!");
@@ -160,8 +160,8 @@ const Classes = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {classes.map((classItem) => {
-            const stats = classStats[classItem.Id] || { studentCount: 0, averageGrade: 0, totalAssignments: 0 };
-            const subjectColor = getSubjectColor(classItem.subject);
+const stats = classStats[classItem.Id] || { studentCount: 0, averageGrade: 0, totalAssignments: 0 };
+            const subjectColor = getSubjectColor(classItem.subject_c);
             
             return (
               <Card key={classItem.Id} className="hover-lift cursor-pointer group">
@@ -221,7 +221,7 @@ const Classes = () => {
                       <div className="text-xs text-gray-500">Students</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg font-bold gradient-text">
+<div className="text-lg font-bold gradient-text">
                         {stats.averageGrade > 0 ? `${stats.averageGrade}%` : "--"}
                       </div>
                       <div className="text-xs text-gray-500">Avg Grade</div>
@@ -263,10 +263,10 @@ const Classes = () => {
                   required
                 />
                 
-                <Select
+<Select
                   label="Subject"
-                  value={newClass.subject}
-                  onChange={(e) => setNewClass(prev => ({ ...prev, subject: e.target.value }))}
+                  value={newClass.subject_c}
+                  onChange={(e) => setNewClass(prev => ({ ...prev, subject_c: e.target.value }))}
                   required
                 >
                   <option value="">Select Subject</option>
@@ -281,9 +281,9 @@ const Classes = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <Select
-                    label="Period"
-                    value={newClass.period}
-                    onChange={(e) => setNewClass(prev => ({ ...prev, period: e.target.value }))}
+label="Period"
+                    value={newClass.period_c}
+                    onChange={(e) => setNewClass(prev => ({ ...prev, period_c: e.target.value }))}
                     required
                   >
                     <option value="">Select Period</option>
@@ -298,9 +298,9 @@ const Classes = () => {
                   </Select>
                   
                   <Input
-                    label="Room"
-                    value={newClass.room}
-                    onChange={(e) => setNewClass(prev => ({ ...prev, room: e.target.value }))}
+label="Room"
+                    value={newClass.room_c}
+                    onChange={(e) => setNewClass(prev => ({ ...prev, room_c: e.target.value }))}
                     placeholder="e.g., Room 205"
                     required
                   />
@@ -308,9 +308,9 @@ const Classes = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <Select
-                    label="Year"
-                    value={newClass.year}
-                    onChange={(e) => setNewClass(prev => ({ ...prev, year: e.target.value }))}
+label="Year"
+                    value={newClass.year_c}
+                    onChange={(e) => setNewClass(prev => ({ ...prev, year_c: e.target.value }))}
                     required
                   >
                     <option value="2024">2024</option>
@@ -318,9 +318,9 @@ const Classes = () => {
                   </Select>
                   
                   <Select
-                    label="Semester"
-                    value={newClass.semester}
-                    onChange={(e) => setNewClass(prev => ({ ...prev, semester: e.target.value }))}
+label="Semester"
+                    value={newClass.semester_c}
+                    onChange={(e) => setNewClass(prev => ({ ...prev, semester_c: e.target.value }))}
                     required
                   >
                     <option value="Fall">Fall</option>

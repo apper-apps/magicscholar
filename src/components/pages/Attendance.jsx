@@ -65,13 +65,13 @@ const Attendance = () => {
   const loadClassAttendance = () => {
     const classAttendance = {};
     const todayAttendance = attendance.filter(record => 
-      record.date === selectedDate && record.classId === selectedClass
+record.date_c === selectedDate && (record.class_id_c?.Id || record.class_id_c).toString() === selectedClass
     );
     
     todayAttendance.forEach(record => {
-      classAttendance[record.studentId] = {
-        status: record.status,
-        notes: record.notes,
+classAttendance[record.student_id_c?.Id || record.student_id_c] = {
+        status: record.status_c,
+        notes: record.notes_c,
         id: record.Id
       };
     });
@@ -82,7 +82,7 @@ const Attendance = () => {
   const getStudentsInClass = () => {
     // For this demo, we'll show all students for the selected class
     // In a real app, you'd have a class enrollment system
-    return students.filter(s => s.status === "active");
+return students.filter(s => s.status_c === "active");
   };
 
   const handleAttendanceChange = async (studentId, status, notes = "") => {
@@ -96,21 +96,21 @@ const Attendance = () => {
       );
       
       // Update local state
-      setAttendanceData(prev => ({
+setAttendanceData(prev => ({
         ...prev,
         [studentId]: {
-          status: record.status,
-          notes: record.notes,
+          status: record.status_c,
+          notes: record.notes_c,
           id: record.Id
         }
       }));
       
       // Update attendance array
       setAttendance(prev => {
-        const existingIndex = prev.findIndex(a => 
-          a.studentId === studentId.toString() && 
-          a.classId === selectedClass && 
-          a.date === selectedDate
+const existingIndex = prev.findIndex(a => 
+          (a.student_id_c?.Id || a.student_id_c).toString() === studentId.toString() && 
+          (a.class_id_c?.Id || a.class_id_c).toString() === selectedClass && 
+          a.date_c === selectedDate
         );
         
         if (existingIndex !== -1) {
@@ -148,7 +148,7 @@ const Attendance = () => {
     const classStudents = getStudentsInClass();
     const totalStudents = classStudents.length;
     const presentCount = Object.values(attendanceData).filter(a => 
-      a.status === "present" || a.status === "late"
+a.status_c === "present" || a.status_c === "late"
     ).length;
     const absentCount = Object.values(attendanceData).filter(a => a.status === "absent").length;
     const unmarkedCount = totalStudents - Object.keys(attendanceData).length;
@@ -167,13 +167,13 @@ const Attendance = () => {
     const classStudents = getStudentsInClass();
     
     const csvData = [
-      ["Date", "Class", "Student", "Status", "Notes"],
+["Date", "Class", "Student", "Status", "Notes"],
       ...classStudents.map(student => {
         const record = attendanceData[student.Id];
         return [
           selectedDate,
-          classItem ? classItem.name : "Unknown",
-          `${student.firstName} ${student.lastName}`,
+          classItem ? classItem.Name : "Unknown",
+          `${student.first_name_c} ${student.last_name_c}`,
           record ? record.status : "unmarked",
           record ? record.notes : ""
         ];
@@ -239,9 +239,9 @@ const Attendance = () => {
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
             >
-              {classes.map(classItem => (
+{classes.map(classItem => (
                 <option key={classItem.Id} value={classItem.Id.toString()}>
-                  {classItem.name} - {classItem.period}
+                  {classItem.Name} - {classItem.period_c}
                 </option>
               ))}
             </Select>
@@ -323,15 +323,15 @@ const Attendance = () => {
                   >
                     <div className="flex items-center space-x-4">
                       <Avatar
-                        initials={`${student.firstName[0]}${student.lastName[0]}`}
+initials={`${student.first_name_c?.[0] || ''}${student.last_name_c?.[0] || ''}`}
                         size="default"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900">
-                          {student.firstName} {student.lastName}
+                          {student.first_name_c} {student.last_name_c}
                         </h3>
                         <div className="text-sm text-gray-500">
-                          Grade {student.gradeLevel} • {student.email}
+                          Grade {student.grade_level_c} • {student.email_c}
                         </div>
                       </div>
                     </div>

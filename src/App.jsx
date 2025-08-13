@@ -1,22 +1,26 @@
-import { createContext, useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { createContext, useEffect, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { setUser, clearUser } from './store/userSlice';
 import Layout from "@/components/organisms/Layout";
-import Dashboard from "@/components/pages/Dashboard";
-import Students from "@/components/pages/Students";
-import StudentProfile from "@/components/pages/StudentProfile";
-import Classes from "@/components/pages/Classes";
 import Grades from "@/components/pages/Grades";
 import Attendance from "@/components/pages/Attendance";
-import Login from '@/components/pages/Login';
-import Signup from '@/components/pages/Signup';
-import Callback from '@/components/pages/Callback';
-import ErrorPage from '@/components/pages/ErrorPage';
-import ResetPassword from '@/components/pages/ResetPassword';
-import PromptPassword from '@/components/pages/PromptPassword';
-
+import Callback from "@/components/pages/Callback";
+import Classes from "@/components/pages/Classes";
+import Signup from "@/components/pages/Signup";
+import Dashboard from "@/components/pages/Dashboard";
+import StudentProfile from "@/components/pages/StudentProfile";
+import Students from "@/components/pages/Students";
+import Login from "@/components/pages/Login";
+import PromptPassword from "@/components/pages/PromptPassword";
+import ErrorPage from "@/components/pages/ErrorPage";
+import ResetPassword from "@/components/pages/ResetPassword";
+import gradesData from "@/services/mockData/grades.json";
+import classesData from "@/services/mockData/classes.json";
+import attendanceData from "@/services/mockData/attendance.json";
+import studentsData from "@/services/mockData/students.json";
+import assignmentsData from "@/services/mockData/assignments.json";
+import { clearUser, setUser } from "@/store/userSlice";
 // Create auth context
 export const AuthContext = createContext(null);
 
@@ -120,9 +124,21 @@ function App() {
     return <div className="loading flex items-center justify-center p-6 h-full w-full"><svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 2v4"></path><path d="m16.2 7.8 2.9-2.9"></path><path d="M18 12h4"></path><path d="m16.2 16.2 2.9 2.9"></path><path d="M12 18v4"></path><path d="m4.9 19.1 2.9-2.9"></path><path d="M2 12h4"></path><path d="m4.9 4.9 2.9 2.9"></path></svg></div>;
   }
   
-  return (
+return (
     <AuthContext.Provider value={authMethods}>
       <div className="min-h-screen bg-background-50">
+        <ToastContainer 
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          style={{ zIndex: 9999 }}
+        />
         {isAuthenticated ? (
           <Layout>
             <Routes>
@@ -133,6 +149,7 @@ function App() {
               <Route path="/classes" element={<Classes />} />
               <Route path="/grades" element={<Grades />} />
               <Route path="/attendance" element={<Attendance />} />
+              <Route path="*" element={<Dashboard />} />
             </Routes>
           </Layout>
         ) : (
@@ -146,18 +163,6 @@ function App() {
             <Route path="*" element={<Login />} />
           </Routes>
         )}
-        <ToastContainer 
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          style={{ zIndex: 9999 }}
-        />
       </div>
     </AuthContext.Provider>
   );

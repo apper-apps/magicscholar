@@ -74,7 +74,7 @@ const [newStudent, setNewStudent] = useState({
 
     // Search filter
 if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+const query = searchQuery.toLowerCase();
       filtered = filtered.filter(student =>
         student.first_name_c?.toLowerCase().includes(query) ||
         student.last_name_c?.toLowerCase().includes(query) ||
@@ -83,7 +83,7 @@ if (searchQuery) {
     }
 
     // Status filter
-    if (statusFilter !== "all") {
+if (statusFilter !== "all") {
       filtered = filtered.filter(student => student.status_c === statusFilter);
     }
 

@@ -61,9 +61,8 @@ const Dashboard = () => {
     const averageGrade = data.grades.length > 0 
       ? Math.round(data.grades.reduce((sum, grade) => sum + grade.percentage, 0) / data.grades.length)
       : 0;
-    
-    // Calculate attendance rate
-    const presentRecords = data.attendance.filter(a => a.status === "present" || a.status === "late").length;
+// Calculate attendance rate
+    const presentRecords = data.attendance.filter(a => a.status_c === "present" || a.status_c === "late").length;
     const attendanceRate = data.attendance.length > 0 
       ? Math.round((presentRecords / data.attendance.length) * 100)
       : 100;
@@ -83,8 +82,8 @@ const Dashboard = () => {
       .sort((a, b) => new Date(b.dateRecorded) - new Date(a.dateRecorded))
       .slice(0, 5)
       .map(grade => {
-        const student = data.students.find(s => s.Id.toString() === grade.studentId);
-        const classItem = data.classes.find(c => c.Id.toString() === grade.classId);
+const student = data.students.find(s => s.Id.toString() === (grade.student_id_c?.Id || grade.student_id_c).toString());
+        const classItem = data.classes.find(c => c.Id.toString() === (grade.class_id_c?.Id || grade.class_id_c).toString());
         return {
           ...grade,
           studentName: student ? `${student.firstName} ${student.lastName}` : "Unknown Student",
@@ -99,9 +98,9 @@ const Dashboard = () => {
     // Calculate student averages and get top 5
     const studentAverages = data.students
       .map(student => {
-        const studentGrades = data.grades.filter(g => g.studentId === student.Id.toString());
+const studentGrades = data.grades.filter(g => (g.student_id_c?.Id || g.student_id_c).toString() === student.Id.toString());
         const average = studentGrades.length > 0
-          ? studentGrades.reduce((sum, grade) => sum + grade.percentage, 0) / studentGrades.length
+          ? studentGrades.reduce((sum, grade) => sum + grade.percentage_c, 0) / studentGrades.length
           : 0;
         return {
           ...student,
@@ -231,22 +230,22 @@ const Dashboard = () => {
                 <span className="flex items-center">
                   <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                   Present
-                </span>
-                <span className="font-medium">{data.attendance.filter(a => a.status === "present").length}</span>
+</span>
+                <span className="font-medium">{data.attendance.filter(a => a.status_c === "present").length}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center">
                   <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
                   Late
                 </span>
-                <span className="font-medium">{data.attendance.filter(a => a.status === "late").length}</span>
+                <span className="font-medium">{data.attendance.filter(a => a.status_c === "late").length}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center">
                   <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
                   Absent
                 </span>
-                <span className="font-medium">{data.attendance.filter(a => a.status === "absent").length}</span>
+                <span className="font-medium">{data.attendance.filter(a => a.status_c === "absent").length}</span>
               </div>
             </div>
           </CardContent>
@@ -283,12 +282,12 @@ const Dashboard = () => {
                         {index + 1}
                       </div>
                       <Avatar 
-                        initials={`${student.firstName[0]}${student.lastName[0]}`}
+initials={`${student.first_name_c?.[0] || ''}${student.last_name_c?.[0] || ''}`}
                         size="sm"
                       />
                       <div>
-                        <p className="font-medium text-gray-900">{student.firstName} {student.lastName}</p>
-                        <p className="text-sm text-gray-500">Grade {student.gradeLevel}</p>
+                        <p className="font-medium text-gray-900">{student.first_name_c} {student.last_name_c}</p>
+                        <p className="text-sm text-gray-500">Grade {student.grade_level_c}</p>
                       </div>
                     </div>
                     <GradeBadge 

@@ -1,54 +1,75 @@
-import React, { useContext, useState } from "react";
-import { AuthContext } from "../../App";
-import ApperIcon from "@/components/ApperIcon";
-import Header from "@/components/organisms/Header";
-import MobileSidebar from "@/components/organisms/MobileSidebar";
-import Sidebar from "@/components/organisms/Sidebar";
-import Button from "@/components/atoms/Button";
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../../App';
+import ApperIcon from '@/components/ApperIcon';
+import Header from '@/components/organisms/Header';
+import MobileSidebar from '@/components/organisms/MobileSidebar';
+import Sidebar from '@/components/organisms/Sidebar';
+import Button from '@/components/atoms/Button';
+
 const Layout = ({ children }) => {
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { logout } = useContext(AuthContext);
+
   return (
-    <div className="min-h-screen bg-background-50 flex">
-      {/* Desktop Sidebar */}
-      <Sidebar className="hidden lg:flex" />
+    <div className="h-screen flex overflow-hidden bg-background-50">
+      {/* Mobile sidebar */}
+      <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      {/* Mobile Sidebar */}
-      <MobileSidebar 
-        isOpen={isMobileSidebarOpen}
-        onClose={() => setIsMobileSidebarOpen(false)}
-      />
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Header with Menu Button */}
-        <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setIsMobileSidebarOpen(true)}
-              className="p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors"
-            >
-              <ApperIcon name="Menu" className="h-6 w-6" />
-            </button>
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex lg:flex-shrink-0">
+        <Sidebar />
+      </div>
+
+      {/* Main content */}
+      <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        {/* Header */}
+        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:border-none">
+          {/* Mobile menu button */}
+          <button
+            className="px-4 border-r border-gray-200 text-gray-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <ApperIcon name="Menu" className="h-6 w-6" />
+          </button>
+          
+          {/* Header content */}
+          <div className="flex-1 px-4 flex justify-between sm:px-6 lg:px-8">
             <div className="flex items-center">
-              <div className="p-1.5 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg">
-                <ApperIcon name="GraduationCap" className="h-5 w-5 text-white" />
-              </div>
-              <span className="ml-2 text-lg font-bold gradient-text">Scholar Hub</span>
+              <h1 className="text-2xl font-bold gradient-text">Scholar Hub</h1>
             </div>
-            <div className="w-10" /> {/* Spacer for centering */}
+            
+            <div className="ml-4 flex items-center md:ml-6">
+              {/* Notifications */}
+              <button className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                <ApperIcon name="Bell" className="h-6 w-6" />
+                <span className="sr-only">View notifications</span>
+              </button>
+
+              {/* Logout button */}
+              <Button 
+                onClick={logout}
+                variant="outline"
+                size="sm"
+                className="ml-3"
+              >
+                <ApperIcon name="LogOut" className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
-        
-        {/* Header */}
-        <Header title="Dashboard" className="hidden lg:block" />
-        
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto">
-          {children}
+
+        {/* Main content area */}
+        <main className="flex-1 relative overflow-y-auto focus:outline-none">
+          <div className="py-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
     </div>
   );
 };
+
 export default Layout;

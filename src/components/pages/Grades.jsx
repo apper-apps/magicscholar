@@ -27,12 +27,12 @@ const Grades = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [classFilter, setClassFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newGrade, setNewGrade] = useState({
-    studentId: "",
-    classId: "",
-    assignmentId: "",
-    score: "",
-    maxScore: 100
+const [newGrade, setNewGrade] = useState({
+    student_id_c: "",
+    class_id_c: "",
+    assignment_id_c: "",
+    score_c: "",
+    max_score_c: 100
   });
 
   const loadGradesData = async () => {
@@ -74,15 +74,15 @@ const Grades = () => {
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(grade => {
-        const student = getStudentById(grade.studentId);
-        const assignment = getAssignmentById(grade.assignmentId);
+filtered = filtered.filter(grade => {
+        const student = getStudentById(grade.student_id_c?.Id || grade.student_id_c);
+        const assignment = getAssignmentById(grade.assignment_id_c?.Id || grade.assignment_id_c);
         return (
           student && (
-            student.firstName.toLowerCase().includes(query) ||
-            student.lastName.toLowerCase().includes(query)
+            student.first_name_c?.toLowerCase().includes(query) ||
+            student.last_name_c?.toLowerCase().includes(query)
           )
-        ) || (assignment && assignment.name.toLowerCase().includes(query));
+        ) || (assignment && assignment.Name?.toLowerCase().includes(query));
       });
     }
 
@@ -94,27 +94,27 @@ const Grades = () => {
     setFilteredGrades(filtered.sort((a, b) => new Date(b.dateRecorded) - new Date(a.dateRecorded)));
   };
 
-  const getStudentById = (id) => {
+const getStudentById = (id) => {
     return students.find(s => s.Id.toString() === id.toString());
   };
 
-  const getClassById = (id) => {
+const getClassById = (id) => {
     return classes.find(c => c.Id.toString() === id.toString());
   };
 
-  const getAssignmentById = (id) => {
+const getAssignmentById = (id) => {
     return assignments.find(a => a.Id.toString() === id.toString());
   };
 
-  const getAssignmentsByClass = (classId) => {
-    return assignments.filter(a => a.classId.toString() === classId.toString());
+const getAssignmentsByClass = (classId) => {
+    return assignments.filter(a => (a.class_id_c?.Id || a.class_id_c).toString() === classId.toString());
   };
 
   const getStudentsByClass = (classId) => {
-    // Get students who have grades in this class
+// Get students who have grades in this class
     const studentIdsInClass = grades
-      .filter(g => g.classId.toString() === classId.toString())
-      .map(g => g.studentId);
+      .filter(g => (g.class_id_c?.Id || g.class_id_c).toString() === classId.toString())
+      .map(g => g.student_id_c?.Id || g.student_id_c);
     
     const uniqueIds = [...new Set(studentIdsInClass)];
     return students.filter(s => uniqueIds.includes(s.Id.toString()));
@@ -123,10 +123,12 @@ const Grades = () => {
   const handleAddGrade = async (e) => {
     e.preventDefault();
     try {
-      const gradeData = {
-        ...newGrade,
-        score: parseFloat(newGrade.score),
-        maxScore: parseFloat(newGrade.maxScore)
+const gradeData = {
+        student_id_c: parseInt(newGrade.student_id_c),
+        class_id_c: parseInt(newGrade.class_id_c),
+        assignment_id_c: parseInt(newGrade.assignment_id_c),
+        score_c: parseFloat(newGrade.score_c),
+        max_score_c: parseFloat(newGrade.max_score_c)
       };
       
       const createdGrade = await gradeService.create(gradeData);
@@ -166,14 +168,14 @@ const Grades = () => {
         const assignment = getAssignmentById(grade.assignmentId);
         
         return [
-          student ? `${student.firstName} ${student.lastName}` : "Unknown",
-          classItem ? classItem.name : "Unknown",
-          assignment ? assignment.name : "Unknown",
-          grade.score,
-          grade.maxScore,
-          grade.percentage,
-          grade.letterGrade,
-          grade.dateRecorded
+student ? `${student.first_name_c || ''} ${student.last_name_c || ''}` : "Unknown",
+          classItem ? classItem.Name : "Unknown",
+          assignment ? assignment.Name : "Unknown",
+          grade.score_c,
+          grade.max_score_c,
+          grade.percentage_c,
+          grade.letter_grade_c,
+          grade.date_recorded_c
         ];
       })
     ];
@@ -268,9 +270,9 @@ const Grades = () => {
           ) : (
             <div className="space-y-2">
               {filteredGrades.map((grade) => {
-                const student = getStudentById(grade.studentId);
-                const classItem = getClassById(grade.classId);
-                const assignment = getAssignmentById(grade.assignmentId);
+const student = getStudentById(grade.student_id_c?.Id || grade.student_id_c);
+                const classItem = getClassById(grade.class_id_c?.Id || grade.class_id_c);
+                const assignment = getAssignmentById(grade.assignment_id_c?.Id || grade.assignment_id_c);
                 
                 return (
                   <div
@@ -279,17 +281,17 @@ const Grades = () => {
                   >
                     <div className="flex items-center space-x-4">
                       <Avatar
-                        initials={student ? `${student.firstName[0]}${student.lastName[0]}` : "?"}
+                        initials={student ? `${student.first_name_c?.[0] || '?'}${student.last_name_c?.[0] || '?'}` : "?"}
                         size="default"
                       />
                       <div>
                         <h3 className="font-semibold text-gray-900">
-                          {student ? `${student.firstName} ${student.lastName}` : "Unknown Student"}
+                          {student ? `${student.first_name_c || ''} ${student.last_name_c || ''}` : "Unknown Student"}
                         </h3>
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
-                          <span>{classItem ? classItem.name : "Unknown Class"}</span>
+                          <span>{classItem ? classItem.Name : "Unknown Class"}</span>
                           <span>•</span>
-                          <span>{assignment ? assignment.name : "Unknown Assignment"}</span>
+                          <span>{assignment ? assignment.Name : "Unknown Assignment"}</span>
                         </div>
                       </div>
                     </div>
@@ -344,8 +346,8 @@ const Grades = () => {
                 >
                   <option value="">Select Class</option>
                   {classes.map(classItem => (
-                    <option key={classItem.Id} value={classItem.Id.toString()}>
-                      {classItem.name}
+<option key={classItem.Id} value={classItem.Id.toString()}>
+                      {classItem.Name}
                     </option>
                   ))}
                 </Select>
@@ -355,11 +357,11 @@ const Grades = () => {
                     label="Assignment"
                     value={newGrade.assignmentId}
                     onChange={(e) => {
-                      const assignment = getAssignmentById(e.target.value);
+const assignment = getAssignmentById(e.target.value);
                       setNewGrade(prev => ({ 
                         ...prev, 
-                        assignmentId: e.target.value,
-                        maxScore: assignment ? assignment.totalPoints : 100
+                        assignment_id_c: e.target.value,
+                        max_score_c: assignment ? assignment.total_points_c : 100
                       }));
                     }}
                     required
@@ -382,8 +384,8 @@ const Grades = () => {
                   >
                     <option value="">Select Student</option>
                     {students.map(student => (
-                      <option key={student.Id} value={student.Id.toString()}>
-                        {student.firstName} {student.lastName}
+<option key={student.Id} value={student.Id.toString()}>
+                        {student.first_name_c} {student.last_name_c}
                       </option>
                     ))}
                   </Select>
@@ -412,9 +414,9 @@ const Grades = () => {
                 {newGrade.score && newGrade.maxScore && (
                   <div className="text-center p-3 bg-gray-50 rounded-lg">
                     <div className="text-sm text-gray-600 mb-1">Preview</div>
-                    <GradeBadge 
-                      grade={gradeService.calculateLetterGrade(Math.round((parseFloat(newGrade.score) / parseFloat(newGrade.maxScore)) * 100))}
-                      percentage={Math.round((parseFloat(newGrade.score) / parseFloat(newGrade.maxScore)) * 100)}
+<GradeBadge 
+                      grade={gradeService.calculateLetterGrade(Math.round((parseFloat(newGrade.score_c) / parseFloat(newGrade.max_score_c)) * 100))}
+                      percentage={Math.round((parseFloat(newGrade.score_c) / parseFloat(newGrade.max_score_c)) * 100)}
                     />
                   </div>
                 )}
